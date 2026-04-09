@@ -1,0 +1,73 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Stores user study goals, streaks, and basic info",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "class": { "type": "string" },
+        "board": { "type": "string" },
+        "streak": { "type": "number" },
+        "totalStudyTime": { "type": "number" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Book": {
+      "title": "NCERT Book",
+      "description": "NCERT book metadata",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "subject": { "type": "string" },
+        "class": { "type": "string" }
+      }
+    },
+    "Note": {
+      "title": "User Note",
+      "description": "Personal study notes",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Task": {
+      "title": "Study Task",
+      "description": "Daily study tasks",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "completed": { "type": "boolean" },
+        "dueDate": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile documents"
+    },
+    "/books/{bookId}": {
+      "schema": "Book",
+      "description": "NCERT books collection"
+    },
+    "/users/{userId}/notes/{noteId}": {
+      "schema": "Note",
+      "description": "User personal notes"
+    },
+    "/users/{userId}/tasks/{taskId}": {
+      "schema": "Task",
+      "description": "User study tasks"
+    }
+  }
+}

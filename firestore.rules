@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email']) &&
+             data.uid is string &&
+             data.email is string &&
+             data.email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidProgress(data) {
+      return data.userId == request.auth.uid &&
+             data.accuracy is number &&
+             data.accuracy >= 0 && data.accuracy <= 100;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data);
+      
+      match /progress/{progressId} {
+        allow get, list: if isOwner(userId);
+        allow write: if isOwner(userId) && isValidProgress(request.resource.data);
+      }
+
+      match /notes/{noteId} {
+        allow get, list, create, update, delete: if isOwner(userId);
+      }
+
+      match /tasks/{taskId} {
+        allow get, list, create, update, delete: if isOwner(userId);
+      }
+
+      match /quiz_results/{resultId} {
+        allow get, list, create, update, delete: if isOwner(userId);
+      }
+    }
+
+    match /books/{bookId} {
+      allow get, list: if isAuthenticated();
+      allow write: if false;
+    }
+
+    match /chapters/{chapterId} {
+      allow get, list: if isAuthenticated();
+      allow write: if false; // Only admin via console/backend
+      
+      match /quizzes/{quizId} {
+        allow get, list: if isAuthenticated();
+        allow write: if false;
+      }
+    }
+    
+    match /test/connection {
+      allow get: if true;
+    }
+  }
+}

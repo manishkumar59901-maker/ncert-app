@@ -1,0 +1,5 @@
+{
+  "name": "NCERT AI HUB",
+  "description": "AI Guru for CBSE & Bihar Board. A comprehensive study companion for Class 6-12 students featuring AI doubt solving, NCERT summaries, and performance tracking.",
+  "requestFramePermissions": ["camera"]
+}
